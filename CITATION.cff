@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this release, please cite the accompanying paper and archived software release."
+title: "Proof-carrying exact bounds for the I3322 Bell inequality"
+type: software
+authors:
+  - family-names: Mghirbi
+    given-names: Nidhal
+version: 2.0.0
+date-released: 2026-07-11
+license: MIT
+abstract: "Exact rational tensor and commuting-operator bounds for I3322, including a full word-length-four D4-block certificate, an exact dimension-499 tensor strategy, two independent exact verifiers, mutation tests, and a certified enclosure below 1e-9."
