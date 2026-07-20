@@ -1,0 +1,19 @@
+name: exact-verification
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  verify:
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12', '3.13']
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python tools/verify_manifest.py
+      - run: python verifier/verify_all.py
+      - run: python verifier/verify_independent.py
+      - run: python tests/test_mutations.py
+      - run: bash tests/test_optimized_pristine.sh
+      - run: bash tests/test_optimized_corruption.sh
