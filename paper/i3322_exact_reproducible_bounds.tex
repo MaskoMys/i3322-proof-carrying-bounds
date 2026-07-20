@@ -1,0 +1,521 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=0.92in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs,array,longtable,microtype}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={Proof-Carrying Exact Quantum Bounds for the I3322 Bell Inequality},pdfauthor={Nidhal Mghirbi}}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\setlist{nosep,leftmargin=*}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\fancyhf{}
+\fancyhead[L]{Proof-carrying exact bounds for $I_{3322}$}
+\fancyhead[R]{N. Mghirbi}
+\fancyfoot[C]{\thepage}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\1}{\mathbb{1}}
+\newcommand{\Bop}{\mathcal{B}_{3322}}
+\newcommand{\W}{\mathcal{W}}
+\newcommand{\Qt}{Q_{\mathrm t}}
+\newcommand{\Qc}{Q_{\mathrm c}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\R}{\mathbb{R}}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\tr}{tr}
+\title{\textbf{Proof-Carrying Exact Quantum Bounds for the $I_{3322}$ Bell Inequality}}
+\author{Nidhal Mghirbi\\Independent Researcher}
+\date{July 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We give a proof-carrying exact-arithmetic enclosure for the tensor-product and commuting-operator quantum values of the $I_{3322}$ Bell inequality.  A rational zero-residual Gram certificate on the full word space of length at most four proves
+\[
+\Qc(I_{3322})\le U_4:=\frac{501750771}{2000000000}=0.2508753855.
+\]
+The certificate is reduced by an exact signed $D_4$ symmetry into five positive-definite rational blocks of dimensions $31,30,26,35,$ and $61$; the last block occurs twice in the $244$-dimensional word representation.  An explicit local-dimension-$499$ tensor strategy, reconstructed from rational rank-one projector blocks and a rational Schmidt vector, has exact value
+\[
+L_{499}=0.2508753845139766\ldots .
+\]
+Consequently
+\[
+L_{499}\le \Qt(I_{3322})\le \Qc(I_{3322})\le U_4,
+\qquad U_4-L_{499}=9.860234645173508\ldots\times10^{-10}.
+\]
+A compact statement printable in full is
+\[
+\frac{25087538451}{100000000000}<\Qt(I_{3322})\le\Qc(I_{3322})\le
+\frac{501750771}{2000000000},
+\]
+whose exact width is $99/100000000000=9.9\times10^{-10}$.  This is about a $265$-fold reduction of the previous exact enclosure.  We derive the reduced dimension-$499$ formula from the explicit projectors, clarify the convention behind the exact length-one value $3/8$, and give a precise verification contract and trust map.  The release uses canonical non-executable JSON, explicit exception-based checks that remain active under optimized Python, two separately implemented standard-library verifiers, direct reconstruction of the high-dimensional strategy, mutation tests, continuous integration, and a release-wide integrity manifest.  No floating-point output enters an acceptance decision.
+\end{abstract}
+
+\section{Introduction}
+The $I_{3322}$ inequality is the simplest tight bipartite Bell inequality with three binary measurements per party that is inequivalent to CHSH \cite{CollinsGisin2004}.  It is a standard test case for semidefinite outer approximations of quantum correlations and for finite-dimensional variational searches.  Numerical work places its quantum value near $0.250875384514$ in the Collins--Gisin normalization and indicates unusually persistent dimension dependence \cite{NPA2008,PalVertesi2010,Tavakoli2023}.
+
+High-precision numerical evidence and an exact theorem have different logical status.  A floating-point SDP matrix can lose positive semidefiniteness after rounding, an approximate sum-of-squares identity can conceal a small residual, and rounded measurement matrices need not satisfy projector or involution relations exactly.  The aim here is therefore not to discover additional decimal digits.  It is to convert a sharp numerical picture into a finite proof object whose acceptance requires only exact integer and rational arithmetic.
+
+The principal results are:
+\begin{enumerate}[label=(\roman*)]
+\item a full length-four, zero-residual rational upper certificate
+\[
+\Qc(I_{3322})\le 501750771/2000000000;
+\]
+\item an explicit exact dimension-$499$ tensor strategy with value $L_{499}$ and a direct derivation of its tridiagonal Rayleigh quotient;
+\item an exact enclosure of width $9.860234645\ldots\times10^{-10}$, hence the same upper bound on any tensor-versus-commuting gap witnessed by this functional;
+\item exact upper-certificate progression at the bare length-one, $1{+}AB$, full length-two, full length-three, and full length-four word sets, together with exact strategies in dimensions $12$, $16$, and $499$;
+\item a hardened proof release with two source-independent verification paths, direct projector reconstruction, optimized-mode tests, mutation tests, and an explicit theorem-dependency map.
+\end{enumerate}
+
+The result does \emph{not} identify the exact Tsirelson bound, prove qubit optimality, settle finite-dimensional attainment, or prove a tensor--commuting separation.  Its main contribution is exact certification: the numerical optimizer is removed from the trusted computing base.
+
+\section{Bell functional and quantum models}\label{sec:models}
+Alice and Bob each have three binary observables.  In a commuting-operator model, $A_i$ and $B_j$ are self-adjoint involutions on a Hilbert space and satisfy $[A_i,B_j]=0$.  Tensor-product models are the special case $A_i=\widetilde A_i\otimes\1$ and $B_j=\1\otimes\widetilde B_j$.  We denote the corresponding suprema by $\Qc$ and $\Qt$, respectively; always $\Qt\le\Qc$.
+
+In the Collins--Gisin probability normalization,
+\begin{align}
+I_{3322}={}&P(A_1B_1)+P(A_1B_2)+P(A_1B_3)+P(A_2B_1)+P(A_2B_2)-P(A_2B_3)\notag\\
+&+P(A_3B_1)-P(A_3B_2)-P(A_1)-2P(B_1)-P(B_2).\label{eq:probI}
+\end{align}
+For $\pm1$ observables this is equivalent to
+\begin{equation}\label{eq:normalization}
+4I_{3322}=\langle\Bop\rangle-4,
+\end{equation}
+where
+\begin{align}\label{eq:bell}
+\Bop={}&A_1+A_2-B_1-B_2+A_1(B_1+B_2+B_3)\nonumber\\
+&+A_2(B_1+B_2-B_3)+A_3(B_1-B_2).
+\end{align}
+The classical bound is $I_{3322}\le0$.
+
+Let $G_3=\mathbb Z_2*\mathbb Z_2*\mathbb Z_2$ and $G=G_3\times G_3$.  A normal-form element is a pair $(u,v)$ of reduced single-party words.  Let $\W_k$ contain all words of total length at most $k$.  The cardinalities relevant here are
+\[
+|\W_1|=7,\qquad |\W_2|=28,\qquad |\W_3|=88,\qquad |\W_4|=244.
+\]
+The intermediate set
+\[
+\W_{1+AB}=\{\1,A_i,B_j,A_iB_j:1\le i,j\le3\}
+\]
+has cardinality $16$.
+
+\section{Exact certificate calculus}\label{sec:calculus}
+Let $W=(w_1,\ldots,w_N)^{\mathsf T}$ be a word vector and let $Y\in\Q^{N\times N}$ be symmetric.
+
+\begin{proposition}[Zero-residual upper certificate]\label{prop:zero}
+If $Y\succeq0$ and, exactly in $\Q[G]$,
+\begin{equation}\label{eq:zero}
+\beta\1-\Bop=W^*YW,
+\end{equation}
+then
+\[
+\Qc(I_{3322})\le\frac{\beta-4}{4}.
+\]
+\end{proposition}
+\begin{proof}
+Every commuting representation sends $W^*YW$ to a positive operator.  Hence $\langle\Bop\rangle\le\beta$, and \eqref{eq:normalization} gives the claim.
+\end{proof}
+
+\begin{lemma}[Residual absorption]\label{lem:absorb}
+If $Y\succeq0$ and
+\[
+\beta\1-\Bop-W^*YW=\sum_g r_gg,
+\]
+then $\langle\Bop\rangle\le\beta+\sum_g|r_g|$.
+\end{lemma}
+\begin{proof}
+Every group element is represented by a unitary, so any state $\phi$ obeys $|\phi(\sum_g r_gg)|\le\sum_g|r_g|$.  Combine this with positivity of $W^*YW$.
+\end{proof}
+
+\begin{proposition}[Exact tensor lower certificate]\label{prop:lower}
+Let six rational matrices define exact finite-dimensional self-adjoint involutions and let $0\ne\psi$ be a rational bipartite vector.  Then the exact Rayleigh quotient of $\Bop$ on $\psi$, normalized through \eqref{eq:normalization}, is a lower bound on $\Qt(I_{3322})$.
+\end{proposition}
+
+These statements are elementary; the substantive work is to produce sharp proof objects for which positivity, the group-algebra identity, and the model relations can all be checked exactly.
+
+\section{The bare length-one relaxation}\label{sec:level1}
+The following identity gives the exact dual value of the bare word-length-one involution relaxation.
+
+\begin{proposition}[Closed-form sum of squares]\label{prop:sos}
+In $\C[G]$,
+\begin{align}\label{eq:sos}
+\frac{11}{2}\1-\Bop=\frac12\big[&(A_1+A_2-B_1-B_2-\1)^2\nonumber\\
+&+(A_1-A_2-B_3)^2+(A_3-B_1+B_2)^2\big].
+\end{align}
+\end{proposition}
+\begin{proof}
+Put $C=A_1+A_2$, $D=A_1-A_2$, $S=B_1+B_2$, and $T=B_1-B_2$.  Expanding and using $C^2+D^2=S^2+T^2=4\1$ gives $11\1-2\Bop$.
+\end{proof}
+
+In the word order $(\1,B_1,B_2,B_3,A_1,A_2,A_3)$, the release contains the rational moment matrix
+\[
+\Gamma_1=\begin{pmatrix}
+1&-1/4&-1/4&0&1/4&1/4&0\\
+-1/4&1&1/2&0&5/8&5/8&1/2\\
+-1/4&1/2&1&0&5/8&5/8&-1/2\\
+0&0&0&1&1/2&-1/2&0\\
+1/4&5/8&5/8&1/2&1&1/2&0\\
+1/4&5/8&5/8&-1/2&1/2&1&0\\
+0&1/2&-1/2&0&0&0&1
+\end{pmatrix}.
+\]
+It is word-consistent, positive semidefinite of rank four, and has objective $11/2$.
+
+\begin{theorem}[Exact bare length-one value]\label{thm:l1}
+The word-length-one moment relaxation containing only positive semidefiniteness and the involution/group-word consistency relations has exact value
+\[
+I_{3322}^{(1,\mathrm{bare})}=\frac38.
+\]
+\end{theorem}
+\begin{proof}
+Proposition~\ref{prop:sos} is dual feasible and $\Gamma_1$ is primal feasible with the same objective.
+\end{proof}
+
+\begin{remark}[Convention]\label{rem:level1}
+Some presentations of the first NPA level append explicit nonnegativity constraints for measurement-event probabilities.  Those inequalities are not automatic in the bare length-one involution moment matrix.  The value $3/8$ proved here refers precisely to the bare relaxation just defined; it should not be identified with a strengthened probability-positive $Q_1$ convention.
+\end{remark}
+
+\section{The full length-four upper certificate}\label{sec:upper4}
+The principal new upper certificate uses the complete $244$-word vector $W_4$ but exploits an exact symmetry of the Bell polynomial.
+
+\subsection{Signed \texorpdfstring{$D_4$}{D4} symmetry}
+Order the six generators as $(A_1,A_2,A_3,B_1,B_2,B_3)$.  Define signed substitutions
+\begin{align*}
+r&=(-B_1,-B_2,B_3,-A_2,-A_1,-A_3),\\
+s&=(A_1,A_2,-A_3,B_2,B_1,B_3).
+\end{align*}
+Direct substitution shows that both preserve $\Bop$, and they obey
+\[
+r^4=s^2=\1,\qquad srs=r^{-1}.
+\]
+They therefore generate a signed action of $D_4$ on $\W_4$.
+
+The real word representation decomposes into the four one-dimensional characters and the unique real two-dimensional irreducible representation.  The corresponding multiplicities are
+\[
+31,\quad30,\quad26,\quad35,\quad61,
+\]
+so that
+\[
+31+30+26+35+2\cdot61=244.
+\]
+The release constructs canonical integer basis matrices $U_{++},U_{+-},U_{-+},U_{--},U_+,U_-$ by exact character projection and deterministic modular pivot selection.  Every invariant symmetric Gram matrix in the chosen commutant section has the form
+\begin{align}\label{eq:blockreconstruction}
+Y={}&U_{++}Z_{++}U_{++}^{\mathsf T}+U_{+-}Z_{+-}U_{+-}^{\mathsf T}
++U_{-+}Z_{-+}U_{-+}^{\mathsf T}+U_{--}Z_{--}U_{--}^{\mathsf T}\nonumber\\
+&+U_+Z_\rho U_+^{\mathsf T}+U_-Z_\rho U_-^{\mathsf T}.
+\end{align}
+Thus positivity reduces to five rational blocks rather than one $244\times244$ matrix.
+
+\subsection{Exact certificate}
+The headline proof object stores five symmetric rational blocks
+\[
+Z_{++}\in\Q^{31\times31},\quad Z_{+-}\in\Q^{30\times30},\quad
+Z_{-+}\in\Q^{26\times26},\quad Z_{--}\in\Q^{35\times35},\quad
+Z_\rho\in\Q^{61\times61}.
+\]
+Each block is represented by an integer matrix and a positive common denominator.
+
+\begin{theorem}[Full length-four rational upper bound]\label{thm:u4}
+The blocks in the release are positive definite and reconstruct, through \eqref{eq:blockreconstruction}, an exact identity
+\[
+\frac{2501750771}{500000000}\1-\Bop=W_4^*YW_4.
+\]
+Consequently
+\[
+\boxed{\Qc(I_{3322})\le U_4:=\frac{501750771}{2000000000}=0.2508753855.}
+\]
+\end{theorem}
+\begin{proof}
+The primary verifier proves positivity of every integer block by fraction-free Bareiss elimination and the Sylvester criterion.  It independently regenerates the $D_4$ bases, reconstructs $Y$, reduces every product $w_i^*w_j$ to group normal form, and verifies every coefficient in the displayed identity exactly.  Proposition~\ref{prop:zero} applies.  The second verifier regenerates the symmetry bases in separately written code, proves positivity by exact rational $LDL^{\mathsf T}$ elimination, and accumulates group coefficients directly from the block columns without first forming $Y$.
+\end{proof}
+
+The earlier exact certificates are retained to show the hierarchy progression:
+\begin{align*}
+\Qc(I_{3322})&\le\frac{1105981489019}{4398046511104}=0.2514710761304\ldots &&(1{+}AB),\\
+\Qc(I_{3322})&\le\frac{1103645539239}{4398046511104}=0.2509399426433\ldots &&(\text{full length }2),\\
+\Qc(I_{3322})&\le\frac{68960172491}{274877906944}=0.2508756460556469\ldots &&(\text{full length }3),\\
+\Qc(I_{3322})&\le\frac{501750771}{2000000000}=0.2508753855 &&(\text{full length }4).
+\end{align*}
+The length-four statement is a certified feasible upper bound; no claim is made that it is the exact optimum of the length-four SDP.
+
+\section{Exact tensor strategies}\label{sec:lower}
+\subsection{Dense dimensions 12 and 16}
+The release contains six rational symmetric involutions and a rational bipartite state in each of local dimensions $12$ and $16$.  Exact contraction gives
+\begin{align*}
+L_{12}&=0.2500643651906238\ldots,\\
+L_{16}&=0.2504433069760140\ldots .
+\end{align*}
+In particular, dimension $12$ is sufficient to exceed $1/4$.  This statement does not prove that dimension $12$ is necessary.
+
+\subsection{Rational block projectors in dimension 499}\label{subsec:499construction}
+Let $n=499$, set $c_0=1$ and $c_n=-1$, and let the certificate contain rational pairs $(c_i,s_i)$ for $1\le i<n$ satisfying
+\[
+c_i^2+s_i^2=1,\qquad s_i>0.
+\]
+Define rank-one projector blocks
+\begin{align*}
+R_i^{\pm}&=\frac12\begin{pmatrix}1-c_i&\pm s_i\\ \pm s_i&1+c_i\end{pmatrix},\\
+S_i^{\pm}&=\frac12\begin{pmatrix}1+c_i&\pm s_i\\ \pm s_i&1-c_i\end{pmatrix},\\
+J&=\frac12\begin{pmatrix}1&1\\1&1\end{pmatrix}.
+\end{align*}
+Their traces are one and their determinants vanish exactly, so they are orthogonal rank-one projectors.
+
+Following the block pattern of P\'al and V\'ertesi \cite{PalVertesi2010}, define six projectors $\widehat A_1,\widehat A_2,\widehat A_3,\widehat B_1,\widehat B_2,\widehat B_3$ on the standard basis $e_1,\ldots,e_n$ as follows:
+\begin{itemize}
+\item $\widehat A_2$ has the singleton $|e_1\rangle\langle e_1|$ and blocks $R_i^+$ on $(e_i,e_{i+1})$ for even $i$; $\widehat A_1$ uses $R_i^-$ on the same blocks.
+\item $\widehat B_2$ has blocks $S_i^+$ on $(e_i,e_{i+1})$ for odd $i<n$ and a zero final singleton; $\widehat B_1$ uses $S_i^-$.
+\item $\widehat A_3$ has $J$ on $(e_i,e_{i+1})$ for odd $i<n$ and the final singleton $|e_n\rangle\langle e_n|$.
+\item $\widehat B_3$ has the first singleton $|e_1\rangle\langle e_1|$ and $J$ on $(e_i,e_{i+1})$ for even $i$.
+\end{itemize}
+The measurement labeling used in \eqref{eq:probI} is
+\begin{equation}\label{eq:relabel}
+(P_{A_1},P_{A_2},P_{A_3})=(\widehat A_2,\widehat A_1,\widehat A_3),
+\qquad
+(P_{B_1},P_{B_2},P_{B_3})=(\widehat B_2,\widehat B_1,\widehat B_3).
+\end{equation}
+The associated $\pm1$ observables are $2P-\1$.
+
+Let $\lambda_1,\ldots,\lambda_n\in\Q$ be the stored nonzero Schmidt vector and put
+\[
+|\psi\rangle=\frac{1}{\sqrt{N}}\sum_{i=1}^n\lambda_i|ii\rangle,
+\qquad N=\sum_{i=1}^n\lambda_i^2.
+\]
+For real symmetric projectors $P,Q$,
+\begin{equation}\label{eq:diagstate}
+\langle\psi|P\otimes Q|\psi\rangle
+=\frac1N\sum_{i,j=1}^n\lambda_i\lambda_jP_{ij}Q_{ij},
+\qquad
+\langle\psi|P\otimes\1|\psi\rangle
+=\frac1N\sum_i\lambda_i^2P_{ii}.
+\end{equation}
+The normalization square root therefore cancels completely.
+
+\subsection{Derivation of the reduced tridiagonal formula}\label{subsec:499derivation}
+Because every projector is block diagonal with blocks on adjacent coordinates, \eqref{eq:diagstate} contains only diagonal terms $\lambda_i^2$ and nearest-neighbor terms $\lambda_i\lambda_{i+1}$.  Substitute the projectors above into \eqref{eq:probI} and use the relabeling \eqref{eq:relabel}.  The opposite signs in $R_i^\pm$ and $S_i^\pm$ cancel unwanted off-diagonal contributions and leave, for each $1\le i<n$, exactly
+\[
+s_i\lambda_i\lambda_{i+1}.
+\]
+Collecting all diagonal contributions gives
+\begin{equation}\label{eq:diagonalcoefficient}
+d_i=c_{i-1}c_i+\frac{c_{i-1}-c_i}{2}-1+\frac{c_n+1}{2}\,\delta_{i,n}.
+\end{equation}
+Since $c_n=-1$, the displayed boundary term vanishes here, but retaining it records the block-end convention explicitly.  Hence the original probability expression is exactly
+\begin{equation}\label{eq:tridiagonal}
+I_{3322}(\psi)=
+\frac{\displaystyle\sum_{i=1}^n d_i\lambda_i^2+
+\displaystyle\sum_{i=1}^{n-1}s_i\lambda_i\lambda_{i+1}}
+{\displaystyle\sum_{i=1}^n\lambda_i^2}.
+\end{equation}
+This is an algebraic identity, not a numerical approximation.
+
+\begin{theorem}[Exact dimension-$499$ lower strategy]\label{thm:l499}
+The released rational parameters define six exact projectors through the construction above.  Their direct evaluation in \eqref{eq:probI} equals the reduced expression \eqref{eq:tridiagonal} and has exact value $L_{499}$ recorded in \texttt{results.json}, with
+\[
+L_{499}=0.2508753845139766\ldots>
+\frac{25087538451}{100000000000}.
+\]
+Therefore $L_{499}\le\Qt(I_{3322})$.
+\end{theorem}
+\begin{proof}
+The primary verifier checks all $498$ unit-circle identities, reconstructs every sparse projector, verifies symmetry and $P^2=P$ exactly, checks that the Schmidt vector is nonzero, and evaluates \eqref{eq:probI} by direct rational contraction.  It independently evaluates \eqref{eq:tridiagonal} and requires exact equality.  The second verifier separately evaluates the reduced expression.  Proposition~\ref{prop:lower} applies.
+\end{proof}
+
+\section{Certified enclosure and physical consequences}\label{sec:main}
+\begin{theorem}[Main exact enclosure]\label{thm:main}
+For the $I_{3322}$ Bell inequality,
+\[
+\boxed{
+L_{499}\le\Qt(I_{3322})\le\Qc(I_{3322})\le
+\frac{501750771}{2000000000}.}
+\]
+The exact rational width is stored in \texttt{results.json} and satisfies
+\[
+U_4-L_{499}=9.860234645173508\ldots\times10^{-10}<10^{-9}.
+\]
+\end{theorem}
+\begin{proof}
+Combine Theorems~\ref{thm:u4} and \ref{thm:l499} with $\Qt\le\Qc$.
+\end{proof}
+
+\begin{corollary}[Compact rational form]\label{cor:compact}
+\[
+\frac{25087538451}{100000000000}<\Qt(I_{3322})\le\Qc(I_{3322})\le
+\frac{501750771}{2000000000},
+\]
+and the exact width of this printed enclosure is
+\[
+\frac{99}{100000000000}=9.9\times10^{-10}.
+\]
+\end{corollary}
+
+Three consequences should be distinguished.
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{Rigorous physical bound.}  The upper endpoint applies to every commuting-operator realization, not merely finite matrices or a numerical relaxation output.
+\item \textbf{Tensor versus commuting.}  For this single Bell functional,
+\[
+0\le\Qc(I_{3322})-\Qt(I_{3322})<10^{-9}.
+\]
+This does not prove equality of the models, but it rules out a larger separation detectable by $I_{3322}$.
+\item \textbf{Exact high-dimensional strategy.}  The lower endpoint is achieved by an explicit finite tensor model with rational projectors and a rational Schmidt vector.  It rigorously confirms the high-dimensional numerical construction without proving that dimension $499$ is necessary or that the global supremum is attained.
+\end{enumerate}
+The exact lower endpoint rounds to $0.250875384514$ at twelve decimal places, matching the displayed numerical limit in the prior high-dimensional literature.  The present novelty is the proof-carrying exact enclosure rather than discovery of that decimal estimate.
+
+\section{Verification architecture and contract}\label{sec:verification}
+\subsection{Proof objects and integrity}
+All certificates are canonical, non-executable JSON.  Each carries a SHA-256 self-hash computed after removing its hash field, and a release-wide manifest authenticates every distributed file.  Pickle and other executable serialization formats are excluded from the trusted path.
+
+\subsection{Two verification paths}
+The primary verifier uses only the Python standard library.  For the level-four upper object it:
+\begin{enumerate}
+\item generates the canonical $244$-word list and signed $D_4$ representation;
+\item constructs the five exact integer symmetry bases;
+\item proves each rational block positive definite by fraction-free Bareiss elimination;
+\item reconstructs the full Gram matrix and checks \eqref{eq:zero} coefficient by coefficient;
+\item reconstructs all six dimension-$499$ projectors and evaluates the original probability expression directly.
+\end{enumerate}
+The second verifier imports no code from the first.  It regenerates the symmetry bases in a separate implementation, proves block positivity by exact rational $LDL^{\mathsf T}$ elimination, and accumulates the upper identity directly from block columns.  It evaluates the lower strategy through the independently coded tridiagonal formula.
+
+All acceptance conditions use explicit exceptions rather than Python \texttt{assert}.  Continuous integration runs both verifiers under ordinary and optimized Python.  A deliberate proof-object corruption is required to fail under \texttt{python -O}.  Mutation tests alter hashes, Gram data, level-four blocks, projector parameters, parameter indices, dense involutions, and states; every mutation must be rejected.
+
+\subsection{Formal checker contract}\label{subsec:contract}
+A level-four upper certificate is accepted only if:
+\begin{enumerate}
+\item its self-hash, canonical word list, dimensions, block ordering, and symmetry convention are exact;
+\item all five rational blocks are symmetric and strictly positive definite;
+\item deterministic reconstruction yields the claimed $D_4$-invariant Gram matrix;
+\item every normal-form coefficient of $\beta\1-\Bop-W_4^*YW_4$ is exactly zero;
+\item $(\beta-4)/4$ equals the stored rational upper endpoint.
+\end{enumerate}
+The dimension-$499$ lower certificate is accepted only if:
+\begin{enumerate}
+\item the indices $1,\ldots,498$ occur exactly once and every $c_i^2+s_i^2=1$ holds exactly;
+\item all six reconstructed matrices are symmetric projectors;
+\item the Schmidt vector is nonzero;
+\item direct evaluation of \eqref{eq:probI} agrees exactly with \eqref{eq:tridiagonal} and the stored rational value;
+\item exact cross multiplication proves the displayed strict lower target.
+\end{enumerate}
+Stored decimal strings, numerical eigenvalues, solver statuses, and generator output are never accepted as evidence.
+
+\subsection{Theorem-dependency and trust map}
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\small
+\textbf{Upper branch:} canonical group normal form $+$ rational $D_4$ block data
+$\longrightarrow$ exact block positivity $+$ exact coefficient identity
+$\longrightarrow$ Theorem~\ref{thm:u4}.\\[2mm]
+\textbf{Lower branch:} rational circle parameters $+$ rational Schmidt vector
+$\longrightarrow$ exact projectors $+$ direct probability contraction $=$ tridiagonal contraction
+$\longrightarrow$ Theorem~\ref{thm:l499}.\\[2mm]
+\textbf{Combination:} Theorems~\ref{thm:u4} and \ref{thm:l499} $+$ the model inclusion $\Qt\le\Qc$
+$\longrightarrow$ Theorem~\ref{thm:main}.\\[2mm]
+\textbf{Not trusted:} SDP solvers, numerical eigensolvers, see-saw searches, rational-reconstruction scripts, stored decimals, or the execution transcripts.
+\end{minipage}}
+\end{center}
+
+\section{Transfer beyond \texorpdfstring{$I_{3322}$}{I3322}}\label{sec:transfer}
+The verification method is not tied to the numerical value of one inequality.  Let $\mathcal A$ be a finitely presented $*$-algebra encoding a Bell or noncommutative polynomial model, let $p=p^*\in\Q\mathcal A$, and let $W$ be a finite rational word vector.
+
+\begin{proposition}[Finite proof-object transfer principle]\label{prop:transfer}
+Suppose a proof object contains rational data satisfying
+\[
+\beta\1-p=W^*YW,\qquad Y\succeq0,
+\]
+with equality decidable in a canonical normal form for $\mathcal A$.  Then exact rational verification proves the corresponding commuting-operator upper bound.  If a second proof object contains rational finite-dimensional operators satisfying all defining relations and a nonzero rational state, exact contraction gives a tensor lower bound.
+\end{proposition}
+\begin{proof}
+The upper statement is the same representation-positivity argument as Proposition~\ref{prop:zero}; the lower statement is the variational principle.  Finiteness and canonical normal form make every acceptance condition decidable by exact arithmetic.
+\end{proof}
+
+In practice, transfer requires four engineering ingredients: a canonical word reducer, an exact coefficient collector, a positivity certificate suited to the matrix structure, and an exact model checker for lower strategies.  Finite symmetry groups can reduce Gram matrices into rational isotypic blocks exactly as in Section~\ref{sec:upper4}.  Numerical optimization remains useful for discovery, but exact affine projection and exact positivity are required before publication of the resulting bound.
+
+\section{Discussion and limitations}\label{sec:discussion}
+The new level-four certificate reduces the exact uncertainty by about a factor of $265$ relative to the preceding level-three release.  The tensor and commuting values of $I_{3322}$ are now indistinguishable at the $10^{-9}$ scale, while the lower point is represented by a concrete dimension-$499$ strategy rather than an abstract limiting argument.
+
+The remaining questions are structurally harder than producing additional digits:
+\begin{itemize}
+\item \emph{Exact optimality.}  The interval does not identify a closed-form optimum.
+\item \emph{Qubit optimality.}  The release does not prove that the qubit value is exactly $1/4$.
+\item \emph{Finite-dimensional attainment.}  A sequence of strong finite strategies does not prove either attainment or non-attainment of the supremum.
+\item \emph{Tensor--commuting separation.}  A narrow common enclosure does not decide whether $\Qt(I_{3322})=\Qc(I_{3322})$.
+\item \emph{Dimension witnessing.}  The dimension-$12$ strategy exceeds $1/4$, but a rigorous witness requires matching upper bounds for all smaller allowed dimensions.
+\end{itemize}
+These limitations are stated to prevent the exact enclosure from being interpreted as a solution to distinct open problems.
+
+\section*{Data and code availability}
+The accompanying release contains the manuscript source and PDF, canonical JSON certificates, two exact verifiers, optimized-mode and mutation tests, continuous-integration configuration, documentation, exact result tables, untrusted generator material, and a SHA-256 manifest.  The principal commands are
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+python3 verifier/verify_all.py
+python3 verifier/verify_independent.py
+python3 tests/test_mutations.py
+bash tests/test_optimized_pristine.sh
+bash tests/test_optimized_corruption.sh
+\end{lstlisting}
+The command \texttt{make verify} runs the primary trusted path.  The independent verifier, mutation suite, and optimized-mode guards are available separately through \texttt{make second}, \texttt{make mutations}, and \texttt{make optimized}.
+
+\section*{Acknowledgments and disclosure}
+AI-assisted drafting, code review, and exploratory computation were used during development.  All mathematical claims accepted by the release are recomputed by exact verification programs, and the author accepts responsibility for the manuscript and software artifact.
+
+\begin{thebibliography}{10}
+\bibitem{Tsirelson1980}
+B.~S. Cirel'son, Quantum generalizations of Bell's inequality, \emph{Lett. Math. Phys.} \textbf{4} (1980), 93--100.
+
+\bibitem{CollinsGisin2004}
+D. Collins and N. Gisin, A relevant two-qubit Bell inequality inequivalent to the CHSH inequality, \emph{J. Phys. A} \textbf{37} (2004), 1775--1787.
+
+\bibitem{NPA2007}
+M. Navascu\'es, S. Pironio, and A. Ac\'in, Bounding the set of quantum correlations, \emph{Phys. Rev. Lett.} \textbf{98} (2007), 010401.
+
+\bibitem{NPA2008}
+M. Navascu\'es, S. Pironio, and A. Ac\'in, A convergent hierarchy of semidefinite programs characterizing the set of quantum correlations, \emph{New J. Phys.} \textbf{10} (2008), 073013.
+
+\bibitem{Doherty2008}
+A. C. Doherty, Y.-C. Liang, B. Toner, and S. Wehner, The quantum moment problem and bounds on entangled multi-prover games, in \emph{Proc. 23rd IEEE CCC} (2008), 199--210.
+
+\bibitem{PalVertesi2010}
+K. F. P\'al and T. V\'ertesi, Maximal violation of the $I_{3322}$ inequality using infinite-dimensional quantum systems, \emph{Phys. Rev. A} \textbf{82} (2010), 022116.
+
+\bibitem{PeyrlParrilo2008}
+H. Peyrl and P. A. Parrilo, Computing sum of squares decompositions with rational coefficients, \emph{Theor. Comput. Sci.} \textbf{409} (2008), 269--281.
+
+\bibitem{Slofstra2019}
+W. Slofstra, The set of quantum correlations is not closed, \emph{Forum Math. Pi} \textbf{7} (2019), e1.
+
+\bibitem{MIPRE}
+Z. Ji, A. Natarajan, T. Vidick, J. Wright, and H. Yuen, MIP$^*=\mathrm{RE}$, arXiv:2001.04383 (2020).
+
+\bibitem{Tavakoli2023}
+A. Tavakoli, A. Pozas-Kerstjens, P. Brown, and M. Ara\'ujo, Semidefinite programming relaxations for quantum correlations, arXiv:2307.02551 (2023).
+\end{thebibliography}
+
+\appendix
+\section{Exact result progression}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Object & Exact certified value & Decimal\\
+\midrule
+Bare length-one optimum & $3/8$ & $0.375$\\
+$1{+}AB$ upper & $1105981489019/4398046511104$ & $0.2514710761304$\\
+Full length-two upper & $1103645539239/4398046511104$ & $0.2509399426433$\\
+Full length-three upper & $68960172491/274877906944$ & $0.250875646055647$\\
+Full length-four upper & $501750771/2000000000$ & $0.2508753855$\\
+Dimension-$12$ lower & exact rational in release & $0.250064365190624$\\
+Dimension-$16$ lower & exact rational in release & $0.250443306976014$\\
+Dimension-$499$ lower & exact rational in release & $0.250875384513977$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Acceptance versus discovery}
+The level-four blocks were proposed through numerical semidefinite optimization in a symmetry-reduced coordinate system.  They were then rationalized, projected onto the exact coefficient constraints, and averaged over the exact signed $D_4$ action.  Those steps are untrusted: a bug can only cause the final exact verifier to reject or, if the output happens to be valid, to accept a mathematically valid certificate.  The trusted conclusion depends solely on the exact proof object and checker contract of Section~\ref{subsec:contract}.
+
+\end{document}
