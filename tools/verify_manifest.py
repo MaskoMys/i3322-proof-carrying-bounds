@@ -12,6 +12,8 @@ def ignored(path: Path) -> bool:
     rel = path.relative_to(ROOT)
     if rel == Path("MANIFEST.sha256"):
         return True
+    if rel.parts and rel.parts[0] == ".git":
+        return True
     if "__pycache__" in rel.parts or path.suffix == ".pyc":
         return True
     if path.parent == ROOT / "paper" and path.suffix in {".aux", ".log", ".out", ".fls", ".fdb_latexmk", ".synctex.gz"}:
