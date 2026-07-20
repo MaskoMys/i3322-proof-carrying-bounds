@@ -1,0 +1,4 @@
+Reproduced level-four certificate:
+a19b1d27b157d7acd76f39f5cc52f9582242646e6386bc8dd8849e465be6119e  /tmp/u4_reproduced.json
+a19b1d27b157d7acd76f39f5cc52f9582242646e6386bc8dd8849e465be6119e  certificates/headline/upper_level4.json
+byte_for_byte_match=yes

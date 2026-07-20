@@ -1,0 +1,17 @@
+Strengthened I3322 exact certificate verification
+[OK] bare length-one optimum: I=3/8 (rank 4)
+[OK] 1+AB exact upper: I<=1105981489019/4398046511104
+[OK] length-two exact upper: I<=1103645539239/4398046511104
+[OK] length-three exact upper: I<=68960172491/274877906944
+[OK] length-four D4-block exact upper: I<=501750771/2000000000 blocks=[31, 30, 26, 35, 61]
+[OK] dimension-12 exact strategy: I=0.250064365190624
+[OK] dimension-16 exact strategy: I=0.250443306976014
+[OK] dimension-499 direct/reduced strategy: I=0.2508753845139766 > 25087538451/100000000000
+[OK] alternate factor/absorption upper: I<=1213163592868919443426681/4835703278458516698824704
+[THEOREM] L_499 <= Q_t <= Q_c <= 501750771/2000000000
+[THEOREM] exact enclosure width ~= 9.860234645173508e-10 < 1e-9
+[THEOREM] compact: 25087538451/100000000000 < Q_t <= Q_c <= 501750771/2000000000
+[THEOREM] compact width = 99/100000000000
+Completed in 4.69 s
+wall_seconds=5.93
+max_rss_kb=301648

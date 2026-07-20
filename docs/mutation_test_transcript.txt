@@ -1,0 +1,12 @@
+[REJECTED] level-four Gram entry
+[REJECTED] level-four beta
+[REJECTED] D4 generator
+[REJECTED] level-four word order
+[REJECTED] dimension-499 circle parameter
+[REJECTED] dimension-499 sine sign
+[REJECTED] dimension-499 zero state
+[REJECTED] dimension-12 observable
+[REJECTED] results table
+All nine mathematical mutations were rejected.
+wall_seconds=4.51
+max_rss_kb=303996

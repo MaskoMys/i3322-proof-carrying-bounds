@@ -1,0 +1,14 @@
+Independent strengthened I3322 exact verification
+[OK second] bare length-one 3/8
+[OK second] 1+AB 1105981489019/4398046511104
+[OK second] length two 1103645539239/4398046511104
+[OK second] length three 68960172491/274877906944
+[OK second] length four 501750771/2000000000
+[OK second] d12 0.250064365190624
+[OK second] d16 0.250443306976014
+[OK second] d499 0.2508753845139766
+[THEOREM second] L_499 <= Q_t <= Q_c <= 501750771/2000000000
+[THEOREM second] exact width 9.860234645173508e-10 < 1e-9
+Completed in 21.83 s
+wall_seconds=23.18
+max_rss_kb=311340

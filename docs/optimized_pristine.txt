@@ -1,0 +1,4 @@
+[OK -O pristine] verifier/verify_all.py
+[OK -O pristine] verifier/verify_independent.py
+wall_seconds=17.70
+max_rss_kb=325196
